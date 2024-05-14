@@ -194,6 +194,7 @@ spisanie_1 = Kostya.request_summ(19500.0)
 
 manager = Manager("PETYA")
 
+manager.get_name()
 
 
 manager.make_request(spisanie_1)
