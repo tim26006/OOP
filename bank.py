@@ -99,8 +99,6 @@ class Account:
     def check_summ(self, summ: float):
         "Метод проверяет возможность списания средств со счёта"
         if self.get_account_balance() >= summ:
-            print(summ)
-            print("OK")
             return True
         else:
             logging.error("Недостаточно средств!")

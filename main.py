@@ -9,11 +9,9 @@ def main():
 
     manager1 = Manager("Vasiliy")  # Создание менеджера
 
-    request1 = client1.request_summ(210000.0) #Инициализация клиентом запроса на списание средств со счета
+    request1 = client1.request_summ(1000000.0) # Запросим снятие суммы, превышающей текущий баланс
 
     manager1.make_request(request1) # Проведение запроса на списание
-
-
 
 if __name__ == "__main__":
     main()
