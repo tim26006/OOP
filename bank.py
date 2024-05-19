@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import random
 import logging
 
-
+logging.basicConfig(level=logging.INFO)
 class Validator:
     @staticmethod
     def validate(value, typ, max_len, min_value=0):
@@ -15,7 +15,8 @@ class Validator:
                 return len(str(value)) < max_len and len(str(value)) > min_value
 
         else:
-            print("Невалидное значение")
+            logging.warning("Невалидное значение")
+
             return False
 
 
@@ -26,6 +27,8 @@ class Human(ABC):
 
     def get_name(self):
         "Геттер - отдает имя клиента"
+
+        logging.info(f"Имя клиента: {self._name}")
         return self._name
 
     def set_name(self, name: str):
@@ -45,7 +48,7 @@ class Client(Human):
     def __init__(self, client_name: str):
         self._account = None
         self.set_name(client_name)
-        print(f"Клиент {client_name} успешно создан!")
+        logging.info(f"Клиент {client_name} успешно создан!")
 
     def say_hello(self):
         print("hello", self.get_name())
@@ -70,17 +73,14 @@ class Account:
         self.set_account_type(type)
         self.set_accont_id(id)
         self.set_account_balance(balance)
-        print(f"Счёт {self.get_account_id()} успешно создан!")
+        logging.info(f"Счёт {self.get_account_id()} успешно создан!")
 
     def write_money(self, summ: float):
         "Функция списания средств со счёта"
-        if summ > 0 and self.check_summ(summ):
-            self._balance -= summ
-            print("Списание выполнено успешно!")
-            return True
-        else:
-            print("Недостаточно средств!")
-            return False
+        self._balance -= summ
+
+        logging.info("Списание выполнено успешно!")
+        return True
 
     def add_money(self, summ: float):
         "Функция пополнения баланса"
@@ -96,14 +96,22 @@ class Account:
 
     def check_summ(self, summ: float):
         "Метод проверяет возможность списания средств со счёта"
-        return self._balance >= summ
+        if self.get_account_balance() >= summ:
+            print(summ)
+            print("OK")
+            return True
+        else:
+            print("Недостаточно средств!")
+
+            return False
 
     def get_account_balance(self):
         "Геттер - отдает баланс счета"
-        print(f"Текущий баланс: {self._balance} рублей")
+        logging.info(f"Текущий баланс: {self._balance} рублей")
         return self._balance
 
     def set_account_balance(self, balance: float):
+        "Сеттер - назначает баланс счёта"
         if Validator.validate(balance, float, 50000000000):
             self._balance = balance
 
@@ -128,7 +136,8 @@ class Request:
         self.set_request_summ(summ)
         self.set_request_date(date)
         self._client = client
-        print(f"Создан запрос на списание от счёта c id {self._account.get_account_id()}")
+        self.set_request_summ(summ)
+        logging.info(f"Создан запрос на списание от счёта c id {self._account.get_account_id()}")
 
     def _proc(self):
         "Функция обработки запроса на списание"
@@ -151,7 +160,7 @@ class Request:
     "Сеттеры"
 
     def set_request_summ(self, new_summ: float):
-        if Validator.validate(new_summ, float, 100000):
+        if Validator.validate(new_summ, float, 100000000):
             self._summ = new_summ
 
     def set_request_date(self, new_date: str):
@@ -176,9 +185,10 @@ class Manager(Client):
         print("hello, i'm manager", self.get_name())
 
     def make_request(self, request: Request):
+        logging.info("⚙️Проведение запроса на списание⚙️")
         if request.check_request():
             return request._proc()
-        return "Недостаточно средств на счете"
+        print("Запрос не удалось выполнить!")
 
 
 
