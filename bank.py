@@ -103,7 +103,7 @@ class Account:
             print("OK")
             return True
         else:
-            print("Недостаточно средств!")
+            logging.error("Недостаточно средств!")
 
             return False
 
