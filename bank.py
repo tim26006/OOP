@@ -42,6 +42,7 @@ class Human(ABC):
 
 
 class Client(Human):
+    "Класс клиента"
     _account = None
     _client_name: str = " "
 
@@ -65,6 +66,7 @@ class Client(Human):
 
 
 class Account:
+    "Класс счёта"
     _type: str = ""
     _balance: float = 0
     _id: int = 0
@@ -126,6 +128,7 @@ class Account:
 
 
 class Request:
+    "Класс запроса на списание"
     _client: Client = None
     _summ = 0.0
     _account: Account = None  # Композиция
@@ -144,7 +147,7 @@ class Request:
         if self._account.write_money(self._summ):  # Делегирование
             return True
         else:
-            print("Недостаточно средств на счете")
+            logging.error("Недостаточно средств на счете")
             return False
 
     "Геттеры"
@@ -160,13 +163,16 @@ class Request:
     "Сеттеры"
 
     def set_request_summ(self, new_summ: float):
+        "Сеттер -  назначает сумму запроса"
         if Validator.validate(new_summ, float, 100000000):
             self._summ = new_summ
 
     def set_request_date(self, new_date: str):
+        "Сеттер -  назначает дату запроса"
         self._date = new_date
 
     def check_the_compliance(self, client):
+        "Метод проверки соответсвия счета клиенту"
         if isinstance(client, Client) and client._account == self._account:
             return True
         return False
@@ -175,20 +181,23 @@ class Request:
         return account.check_summ(summ)  # Проверка возможности списания со счёта
 
     def check_request(self):
+        "Метод общей проверки списания со счёта"
         if self.check_the_possibility(self._account, self._summ) and self.check_the_compliance(self._client):
             return True
         return False
 
 
 class Manager(Client):
+    "Класс - менеджер"
     def say_hello(self):
         print("hello, i'm manager", self.get_name())
 
     def make_request(self, request: Request):
+        "Передать запрос на проверку"
         logging.info("⚙️Проведение запроса на списание⚙️")
         if request.check_request():
             return request._proc()
-        print("Запрос не удалось выполнить!")
+        logging.error("Запрос не удалось выполнить!")
 
 
 
